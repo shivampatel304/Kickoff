@@ -7,6 +7,7 @@ exports.getMe = exports.login = exports.signup = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma_1 = __importDefault(require("../lib/prisma"));
+const client_1 = require("../generated/prisma/client");
 const signup = async (req, res) => {
     try {
         const { email, name, password } = req.body;
@@ -33,6 +34,11 @@ const signup = async (req, res) => {
         });
     }
     catch (error) {
+        if (error instanceof client_1.Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002") {
+            res.status(409).json({ error: "Email already registered" });
+            return;
+        }
         console.error("Signup error: ", error);
         res.status(500).json({ error: "Internal server error" });
     }

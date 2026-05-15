@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma from "../lib/prisma";
+import { Prisma } from "../generated/prisma/client";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -34,7 +35,14 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       token,
       user: { id: user.id, email: user.email, name: user.name },
     });
-  } catch (error) {
+  } catch (error: any) {
+    if(
+        error instanceof Prisma.PrismaClientKnownRequestError && 
+        error.code === "P2002"
+    ){
+        res.status(409).json({error: "Email already registered"});
+        return;
+    }
     console.error("Signup error: ", error);
     res.status(500).json({ error: "Internal server error" });
   }

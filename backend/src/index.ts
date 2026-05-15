@@ -1,20 +1,28 @@
-import express,  {Request, Response} from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { Pool } from 'pg';
+import express from "express";
+import dotenv from "dotenv";
+import authRoutes from "./routes/auth.routes";
 
 dotenv.config();
 
+const requiredEnvVars = ['JWT_SECRET', 'DATABASE_URL'];
+
+for(const envVar of requiredEnvVars){
+    if(!process.env[envVar]){
+        console.error(`Missing required environment variable: ${envVar}`)
+        process.exit(1);
+    }
+}
+
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3000;
+
 app.use(express.json());
+app.use("/api/auth", authRoutes);
 
-const pool = new Pool({connectionString: process.env.DATABASE_URL})
-
-app.get('/api/health', async (_req: Request, res: Response) => {
-    const  result = await pool.query('SELECT NOW()');
-    res.json({ok: true, time: result.rows[0].now})
+app.get("/", (_req, res) => {
+    res.json({message: "Auth API is running"});
 });
 
-const port = process.env.PORT || 3001;
-app.listen(port,  () => console.log(`API listening on : ${port}`));
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+})

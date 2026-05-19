@@ -14,7 +14,7 @@ import {
   Stack,
 } from "@mui/material";
 import { Visibility, VisibilityOff, SportsSoccer } from "@mui/icons-material";
-import { signup, login } from "../services/auth";
+import { signup, login } from "../api/services/auth.service";
 
 // ─── Helpers ───
 function validateEmail(email: string): boolean {

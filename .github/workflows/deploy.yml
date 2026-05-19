@@ -1,18 +1,15 @@
-name: Deploy Backend to DigitalOcean
+name: Deploy to DigitalOcean
 
 on:
   push:
     branches:
       - master
-    paths:
-      - 'backend/**'
 
 jobs:
-  deploy:
+  deploy-backend:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy via SSH
+      - name: Deploy Backend
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.DROPLET_HOST }}
@@ -25,3 +22,19 @@ jobs:
             npm install
             npm run build
             pm2 restart index
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Frontend
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            cd ~/Kickoff
+            git pull origin master
+            cd frontend
+            npm install
+            npm run build

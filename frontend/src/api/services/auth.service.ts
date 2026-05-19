@@ -3,7 +3,7 @@ import type { SignupPayload, AuthResponse, LoginPayload } from "../types/auth.ty
 
 export async function signup(payload: SignupPayload): Promise<AuthResponse> {
     const {data} = await API.post<AuthResponse>(
-        `${API.defaults.baseURL}/signup`,
+        `${API.defaults.baseURL}/auth/auth/signup`,
         payload
     );
     return data;
@@ -11,7 +11,7 @@ export async function signup(payload: SignupPayload): Promise<AuthResponse> {
 
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
     const {data} = await API.post<AuthResponse>(
-        `${API.defaults.baseURL}/login`,
+        `${API.defaults.baseURL}/api/auth/login`,
         payload
     );
     return data;
